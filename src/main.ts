@@ -51,10 +51,14 @@ type Key = "Space";
 // State processing
 
 type State = Readonly<{
+    lives: number;
+    score: number;
     gameEnd: boolean;
 }>;
 
 const initialState: State = {
+    lives: 3,
+    score: 0,
     gameEnd: false,
 };
 
