@@ -58,6 +58,9 @@ const initialState: State = {
     gameEnd: false,
 };
 
+interface Action {
+    apply(s: State): State;
+}
 /**
  * Updates the state by proceeding with one time step.
  *
@@ -180,6 +183,8 @@ export const state$ = (csvContents: string): Observable<State> => {
     const key$ = fromEvent<KeyboardEvent>(document, "keypress");
     const fromKey = (keyCode: Key) =>
         key$.pipe(filter(({ code }) => code === keyCode));
+
+    // TODO: Add streams for input keys
 
     /** Determines the rate of time steps */
     const tick$ = interval(Constants.TICK_RATE_MS);
