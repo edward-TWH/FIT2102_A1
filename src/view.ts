@@ -103,5 +103,8 @@ const render = (): ((s: State) => void) => {
 
         svg.appendChild(pipeTop);
         svg.appendChild(pipeBottom);
+
+        livesText.textContent = `${s.lives}`;
+        scoreText.textContent = `${s.score}`;
     };
 };
