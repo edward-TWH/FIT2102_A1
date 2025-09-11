@@ -27,6 +27,7 @@ type State = Readonly<{
     lives: number;
     score: number;
     gameEnd: boolean;
+    y_velocity: number;
 }>;
 
 interface Action {
