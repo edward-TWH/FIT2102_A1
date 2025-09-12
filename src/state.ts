@@ -1,11 +1,7 @@
 import { State, Action, Constants } from "./types";
+export { Tick, Flap, Bounce };
 
-export const initialState: State = {
-    lives: 3,
-    score: 0,
-    gameEnd: false,
-    y_velocity: 0,
-}; /**
+/**
  * Updates the state by proceeding with one time step.
  *
  * @param s Current state
@@ -19,8 +15,9 @@ class Tick implements Action {
     apply(s: State): State {
         return {
             ...s,
+            y_pos: s.y_pos + s.y_velocity,
             y_velocity: s.y_velocity + Constants.GRAVITY,
-        };
+        } as const;
     }
 }
 

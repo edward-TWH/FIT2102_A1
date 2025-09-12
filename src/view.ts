@@ -56,6 +56,40 @@ const render = (): ((s: State) => void) => {
     const scoreText = document.querySelector("#scoreText") as HTMLElement;
 
     const svg = document.querySelector("#svgCanvas") as SVGSVGElement;
+    // Add birb to the main grid canvas
+    const birdImg = createSvgElement(svg.namespaceURI, "image", {
+        href: "assets/birb.png",
+        x: `${Viewport.CANVAS_WIDTH * 0.3 - Birb.WIDTH / 2}`,
+        y: `${Viewport.CANVAS_HEIGHT / 2 - Birb.HEIGHT / 2}`,
+        width: `${Birb.WIDTH}`,
+        height: `${Birb.HEIGHT}`,
+    });
+    svg.appendChild(birdImg);
+
+    // Draw a static pipe as a demonstration
+    const pipeGapY = 200; // vertical center of the gap
+    const pipeGapHeight = 100;
+
+    // Top pipe
+    const pipeTop = createSvgElement(svg.namespaceURI, "rect", {
+        x: "150",
+        y: "0",
+        width: `${Constants.PIPE_WIDTH}`,
+        height: `${pipeGapY - pipeGapHeight / 2}`,
+        fill: "green",
+    });
+
+    // Bottom pipe
+    const pipeBottom = createSvgElement(svg.namespaceURI, "rect", {
+        x: "150",
+        y: `${pipeGapY + pipeGapHeight / 2}`,
+        width: `${Constants.PIPE_WIDTH}`,
+        height: `${Viewport.CANVAS_HEIGHT - (pipeGapY + pipeGapHeight / 2)}`,
+        fill: "green",
+    });
+
+    svg.appendChild(pipeTop);
+    svg.appendChild(pipeBottom);
 
     svg.setAttribute(
         "viewBox",
@@ -69,42 +103,10 @@ const render = (): ((s: State) => void) => {
      * @param s Current state
      */
     return (s: State) => {
-        // Add birb to the main grid canvas
-        const birdImg = createSvgElement(svg.namespaceURI, "image", {
-            href: "assets/birb.png",
-            x: `${Viewport.CANVAS_WIDTH * 0.3 - Birb.WIDTH / 2}`,
-            y: `${Viewport.CANVAS_HEIGHT / 2 - Birb.HEIGHT / 2}`,
-            width: `${Birb.WIDTH}`,
-            height: `${Birb.HEIGHT}`,
-        });
-        svg.appendChild(birdImg);
-
-        // Draw a static pipe as a demonstration
-        const pipeGapY = 200; // vertical center of the gap
-        const pipeGapHeight = 100;
-
-        // Top pipe
-        const pipeTop = createSvgElement(svg.namespaceURI, "rect", {
-            x: "150",
-            y: "0",
-            width: `${Constants.PIPE_WIDTH}`,
-            height: `${pipeGapY - pipeGapHeight / 2}`,
-            fill: "green",
-        });
-
-        // Bottom pipe
-        const pipeBottom = createSvgElement(svg.namespaceURI, "rect", {
-            x: "150",
-            y: `${pipeGapY + pipeGapHeight / 2}`,
-            width: `${Constants.PIPE_WIDTH}`,
-            height: `${Viewport.CANVAS_HEIGHT - (pipeGapY + pipeGapHeight / 2)}`,
-            fill: "green",
-        });
-
-        svg.appendChild(pipeTop);
-        svg.appendChild(pipeBottom);
-
         livesText.textContent = `${s.lives}`;
         scoreText.textContent = `${s.score}`;
+
+        birdImg.setAttribute("transform", `translate(0, ${s.y_pos})`);
+        console.log(s);
     };
 };

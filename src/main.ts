@@ -21,13 +21,14 @@ import {
     fromEvent,
     interval,
     map,
+    merge,
     scan,
     switchMap,
     take,
 } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
-import { Constants, State, Key } from "./types";
-import { initialState } from "./state";
+import { Constants, State, Key, initialState } from "./types";
+import { Flap, Tick, Bounce } from "./state";
 import { render } from "./view";
 
 export const state$ = (csvContents: string): Observable<State> => {
@@ -37,13 +38,16 @@ export const state$ = (csvContents: string): Observable<State> => {
     const fromKey = (keyCode: Key) =>
         key$.pipe(filter(({ code }) => code === keyCode));
 
-    // TODO: Add streams for input keys
+    /** Create a stream for space presses, which creates a stream of Flap objects */
+    const flap$ = fromKey("Space").pipe(map(_ => new Flap()));
 
     /** Determines the rate of time steps */
-    const tick$ = interval(Constants.TICK_RATE_MS);
+    const tick$ = interval(Constants.TICK_RATE_MS).pipe(
+        map(elapsed => new Tick(elapsed)),
+    );
 
-    return tick$.pipe(
-        scan((s: State) => ({ ...s, gameEnd: false }), initialState),
+    return merge(flap$, tick$).pipe(
+        scan((state, action) => action.apply(state), initialState),
     );
 };
 
