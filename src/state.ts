@@ -10,8 +10,18 @@ export { Tick, Flap, Bounce };
 const tick = (s: State) => s;
 
 class Tick implements Action {
-    constructor(elapsed: number) {}
+    constructor(public readonly elapsed: number) {}
 
+    apply(s: State): State {
+        return {
+            ...s,
+            y_pos: s.y_pos + s.y_velocity,
+            y_velocity: s.y_velocity + Constants.GRAVITY,
+        } as const;
+    }
+}
+
+class Gravity implements Action {
     apply(s: State): State {
         return {
             ...s,
