@@ -18,7 +18,7 @@ const Birb = {
 
 const Constants = {
     PIPE_WIDTH: 50,
-    TICK_RATE_MS: 500, // Might need to change this!
+    TICK_RATE_MS: 50, // Might need to change this!
     GRAVITY: 1,
 } as const; // State processing
 
