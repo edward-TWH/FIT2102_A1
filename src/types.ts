@@ -22,6 +22,9 @@ const Constants = {
     PIPE_WIDTH: 50,
     TICK_RATE_MS: 50, // Might need to change this!
     GRAVITY: new Vec(0, 1),
+    START_LIVES: 3,
+    START_SCORE: 0,
+    START_TIME: 0,
 } as const; // State processing
 
 /** Types and interfaces */
@@ -51,6 +54,8 @@ type State = Readonly<{
     bird: Body;
     gameEnd: boolean;
     time: number;
+    pipes: ReadonlyArray<Body>;
+    exit: ReadonlyArray<Body>;
 }>;
 
 interface Action {

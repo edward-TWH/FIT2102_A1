@@ -79,9 +79,11 @@ function createBird(): Body {
 }
 
 const initialState: State = {
-    lives: 3,
-    score: 0,
+    lives: Constants.START_LIVES,
+    score: Constants.START_SCORE,
     gameEnd: false,
     bird: createBird(),
-    time: 0,
+    time: Constants.START_TIME,
+    pipes: [],
+    exit: [],
 };
