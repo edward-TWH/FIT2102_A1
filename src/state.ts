@@ -18,6 +18,7 @@ class Tick implements Action {
             ...s,
             pos: s.pos.add(s.vel),
             vel: s.vel.add(new Vec(0, Constants.GRAVITY)),
+            time: this.elapsed,
         } as const;
     }
 }

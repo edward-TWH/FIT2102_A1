@@ -31,6 +31,7 @@ type State = Readonly<{
     gameEnd: boolean;
     vel: Vec;
     pos: Vec;
+    time: number;
 }>;
 
 const initialState: State = {
@@ -39,6 +40,7 @@ const initialState: State = {
     gameEnd: false,
     vel: new Vec(),
     pos: new Vec(),
+    time: 0,
 };
 interface Action {
     apply(s: State): State;
