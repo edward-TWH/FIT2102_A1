@@ -3,7 +3,7 @@
  */
 
 export { Viewport, Birb, Constants };
-export type { State, Key, Action, Body, Rect };
+export type { State, Key, Action, Body, Rect, ViewType, ObjectId };
 
 import { Vec } from "./util";
 
@@ -33,7 +33,6 @@ type ObjectId = Readonly<{
 }>;
 
 type Rect = Readonly<{
-    viewType: ViewType;
     pos: Vec; // Note that this represents the top left corner of the element
     width: number;
     height: number;
@@ -42,6 +41,7 @@ type Rect = Readonly<{
 type Body = Rect &
     ObjectId &
     Readonly<{
+        viewType: ViewType;
         vel: Vec;
     }>;
 

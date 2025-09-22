@@ -1,4 +1,13 @@
-import { State, Action, Constants, Birb, Body } from "./types";
+import {
+    State,
+    Action,
+    Constants,
+    Birb,
+    Body,
+    ViewType,
+    ObjectId,
+    Rect,
+} from "./types";
 import { Vec } from "./util";
 export { Tick, Flap, Bounce, initialState };
 
@@ -43,8 +52,19 @@ class Bounce implements Action {
         } as const;
     }
 }
+const createRect =
+    (viewType: ViewType) =>
+    (oid: ObjectId) =>
+    (rect: Rect) =>
+    (vel: Vec): Body => ({
+        viewType: viewType,
+        ...oid,
+        ...rect,
+        vel: vel,
+    });
 
 // TODO: Write a composable function createRect for creating pipes
+const createPipe = createRect("pipe");
 
 function createBird(): Body {
     return {
