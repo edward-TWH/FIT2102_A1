@@ -5,6 +5,8 @@
 export { Viewport, Birb, Constants, initialState };
 export type { State, Key, Action };
 
+import { Vec } from "./util";
+
 /** Constants */
 const Viewport = {
     CANVAS_WIDTH: 600,

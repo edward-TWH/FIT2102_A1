@@ -106,7 +106,7 @@ const render = (): ((s: State) => void) => {
         livesText.textContent = `${s.lives}`;
         scoreText.textContent = `${s.score}`;
 
-        birdImg.setAttribute("transform", `translate(0, ${s.pos})`);
+        birdImg.setAttribute("transform", `translate(0, ${s.pos.y})`);
         console.log(s);
     };
 };

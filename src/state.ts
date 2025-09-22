@@ -1,4 +1,5 @@
 import { State, Action, Constants } from "./types";
+import { Vec } from "./util";
 export { Tick, Flap, Bounce };
 
 /**
