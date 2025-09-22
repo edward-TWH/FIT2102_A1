@@ -46,6 +46,7 @@ type Body = Rect &
     Readonly<{
         viewType: ViewType;
         vel: Vec;
+        acc: Vec;
     }>;
 
 type State = Readonly<{

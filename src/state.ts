@@ -23,13 +23,15 @@ class Tick implements Action {
         return {
             ...s,
             time: this.elapsed,
-            bird: {
-                ...s.bird,
-                vel: s.bird.vel.add(Constants.GRAVITY),
-                pos: s.bird.pos.add(s.bird.vel),
-            },
+            bird: Tick.moveBody(s.bird),
         } as const;
     }
+
+    static moveBody = (b: Body): Body => ({
+        ...b,
+        pos: b.pos.add(b.vel),
+        vel: b.vel.add(b.acc),
+    });
 }
 
 class Flap implements Action {
@@ -61,6 +63,7 @@ const createRect =
         ...oid,
         ...rect,
         vel: vel,
+        acc: new Vec(),
     });
 
 // TODO: Write a composable function createRect for creating pipes
@@ -75,6 +78,7 @@ function createBird(): Body {
         width: Birb.WIDTH,
         height: Birb.HEIGHT,
         vel: new Vec(),
+        acc: Constants.GRAVITY,
     };
 }
 
