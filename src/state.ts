@@ -15,18 +15,8 @@ class Tick implements Action {
     apply(s: State): State {
         return {
             ...s,
-            y_pos: s.y_pos + s.y_velocity,
-            y_velocity: s.y_velocity + Constants.GRAVITY,
-        } as const;
-    }
-}
-
-class Gravity implements Action {
-    apply(s: State): State {
-        return {
-            ...s,
-            y_pos: s.y_pos + s.y_velocity,
-            y_velocity: s.y_velocity + Constants.GRAVITY,
+            pos: s.pos.add(s.vel),
+            vel: s.vel.add(new Vec(0, Constants.GRAVITY)),
         } as const;
     }
 }
@@ -35,7 +25,7 @@ class Flap implements Action {
     apply(s: State): State {
         return {
             ...s,
-            y_velocity: -4,
+            vel: new Vec(0, -4),
         } as const;
     }
 }
