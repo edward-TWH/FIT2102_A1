@@ -1,24 +1,24 @@
-import { State, Action, Constants } from "./types";
+import { State, Action, Constants, Birb, Body } from "./types";
 import { Vec } from "./util";
-export { Tick, Flap, Bounce };
-
-/**
- * Updates the state by proceeding with one time step.
- *
- * @param s Current state
- * @returns Updated state
- */
-const tick = (s: State) => s;
+export { Tick, Flap, Bounce, initialState };
 
 class Tick implements Action {
+    /**
+     * A discrete timestep. The bird accelerates and changes position
+     * @param elapsed
+     *
+     */
     constructor(public readonly elapsed: number) {}
 
     apply(s: State): State {
         return {
             ...s,
-            pos: s.pos.add(s.vel),
-            vel: s.vel.add(new Vec(0, Constants.GRAVITY)),
             time: this.elapsed,
+            bird: {
+                ...s.bird,
+                vel: s.bird.vel.add(Constants.GRAVITY),
+                pos: s.bird.pos.add(s.bird.vel),
+            },
         } as const;
     }
 }
@@ -27,7 +27,10 @@ class Flap implements Action {
     apply(s: State): State {
         return {
             ...s,
-            vel: new Vec(0, -4),
+            bird: {
+                ...s.bird,
+                vel: new Vec(0, -5),
+            },
         } as const;
     }
 }
@@ -40,3 +43,25 @@ class Bounce implements Action {
         } as const;
     }
 }
+
+// TODO: Write a composable function createRect for creating pipes
+
+function createBird(): Body {
+    return {
+        id: "0",
+        timeCreated: 0,
+        viewType: "bird",
+        pos: new Vec(),
+        width: Birb.WIDTH,
+        height: Birb.HEIGHT,
+        vel: new Vec(),
+    };
+}
+
+const initialState: State = {
+    lives: 3,
+    score: 0,
+    gameEnd: false,
+    bird: createBird(),
+    time: 0,
+};

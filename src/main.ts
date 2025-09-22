@@ -27,7 +27,8 @@ import {
     take,
 } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
-import { Constants, State, Key, initialState } from "./types";
+import { Constants, State, Key } from "./types";
+import { initialState } from "./state";
 import { Flap, Tick, Bounce } from "./state";
 import { render } from "./view";
 

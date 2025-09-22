@@ -2,8 +2,8 @@
  * This file contains the type declarations and constants used in the project
  */
 
-export { Viewport, Birb, Constants, initialState };
-export type { State, Key, Action };
+export { Viewport, Birb, Constants };
+export type { State, Key, Action, Body, Rect };
 
 import { Vec } from "./util";
 
@@ -21,27 +21,38 @@ const Birb = {
 const Constants = {
     PIPE_WIDTH: 50,
     TICK_RATE_MS: 50, // Might need to change this!
-    GRAVITY: 1,
+    GRAVITY: new Vec(0, 1),
 } as const; // State processing
 
 /** Types and interfaces */
+type ViewType = "bird" | "pipe";
+
+type ObjectId = Readonly<{
+    id: String;
+    timeCreated: number;
+}>;
+
+type Rect = Readonly<{
+    viewType: ViewType;
+    pos: Vec; // Note that this represents the top left corner of the element
+    width: number;
+    height: number;
+}>;
+
+type Body = Rect &
+    ObjectId &
+    Readonly<{
+        vel: Vec;
+    }>;
+
 type State = Readonly<{
     lives: number;
     score: number;
+    bird: Body;
     gameEnd: boolean;
-    vel: Vec;
-    pos: Vec;
     time: number;
 }>;
 
-const initialState: State = {
-    lives: 3,
-    score: 0,
-    gameEnd: false,
-    vel: new Vec(),
-    pos: new Vec(),
-    time: 0,
-};
 interface Action {
     apply(s: State): State;
 } // User input
