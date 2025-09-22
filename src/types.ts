@@ -27,18 +27,16 @@ type State = Readonly<{
     lives: number;
     score: number;
     gameEnd: boolean;
-    y_velocity: number;
-    y_pos: number;
-    isGameStarted: boolean;
+    vel: Vec;
+    pos: Vec;
 }>;
 
 const initialState: State = {
     lives: 3,
     score: 0,
     gameEnd: false,
-    y_velocity: 0,
-    y_pos: 0,
-    isGameStarted: false,
+    vel: new Vec(),
+    pos: new Vec(),
 };
 interface Action {
     apply(s: State): State;
