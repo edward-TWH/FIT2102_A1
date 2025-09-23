@@ -25,6 +25,7 @@ const Constants = {
     START_LIVES: 3,
     START_SCORE: 0,
     START_TIME: 0,
+    PIPE_SPEED: new Vec(5, 0),
 } as const; // State processing
 
 /** Types and interfaces */
