@@ -60,8 +60,16 @@ type State = Readonly<{
     exit: ReadonlyArray<Body>;
 }>;
 
+type ParsedPipe = Readonly<{
+    gap_y: String;
+    gap_height: String;
+    time: number;
+}>;
+
 interface Action {
     apply(s: State): State;
-} // User input
+}
+
+// User input
 
 type Key = "Space";
