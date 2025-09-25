@@ -7,9 +7,12 @@ import {
     ViewType,
     ObjectId,
     Rect,
+    Viewport,
+    TimeStamp,
 } from "./types";
 import { Vec } from "./util";
-export { Tick, Flap, Bounce, initialState };
+import { ParsedPipe } from "./types";
+export { Tick, Flap, Bounce, initialState, createPipe };
 
 class Tick implements Action {
     /**
@@ -54,12 +57,54 @@ class Bounce implements Action {
         } as const;
     }
 }
+
+class SpawnPipes implements Action {
+    constructor(
+        public readonly pipe: ParsedPipe,
+        public readonly elapsed: number,
+    ) {}
+    static createTopPipe = (pipe: ParsedPipe) => {
+        // return function composed with rect
+        const width = Constants.PIPE_WIDTH,
+            height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
+            time = pipe.time;
+        return createPipe({ pos: new Vec(0, 0), width: width, height: height })(
+            { timeCreated: time },
+        );
+    };
+    static createBotPipe = (pipe: ParsedPipe) => {
+        // return function composed with rect
+        const width = Constants.PIPE_WIDTH,
+            height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
+            time = pipe.time;
+        return createPipe({ pos: new Vec(0, 0), width: width, height: height })(
+            { timeCreated: time },
+        );
+    };
+    apply(s: State): State {
+        // call create functions with timestamps, which completes signature
+        return {
+            ...s,
+            pipes: [
+                ...s.pipes,
+                SpawnPipes.createTopPipe(this.pipe)({ id: String(s.objCount) }),
+                SpawnPipes.createBotPipe(this.pipe)({
+                    id: String(s.objCount + 1),
+                }),
+            ],
+            objCount: s.objCount + 2,
+        };
+    }
+}
+
 const createRect =
     (viewType: ViewType) =>
-    (oid: ObjectId) =>
+    (vel: Vec) =>
     (rect: Rect) =>
-    (vel: Vec): Body => ({
+    (t: TimeStamp) =>
+    (oid: ObjectId): Body => ({
         viewType: viewType,
+        ...t,
         ...oid,
         ...rect,
         vel: vel,
@@ -67,7 +112,7 @@ const createRect =
     });
 
 // TODO: Write a composable function createRect for creating pipes
-const createPipe = createRect("pipe");
+const createPipe = createRect("pipe")(Constants.PIPE_SPEED);
 
 function createBird(): Body {
     return {
@@ -90,4 +135,5 @@ const initialState: State = {
     time: Constants.START_TIME,
     pipes: [],
     exit: [],
+    objCount: 1,
 };
