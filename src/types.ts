@@ -3,7 +3,17 @@
  */
 
 export { Viewport, Birb, Constants };
-export type { State, Key, Action, Body, Rect, ViewType, ObjectId };
+export type {
+    State,
+    Key,
+    Action,
+    Body,
+    Rect,
+    ViewType,
+    ObjectId,
+    ParsedPipe,
+    TimeStamp,
+};
 
 import { Vec } from "./util";
 
@@ -33,6 +43,9 @@ type ViewType = "bird" | "pipe";
 
 type ObjectId = Readonly<{
     id: String;
+}>;
+
+type TimeStamp = Readonly<{
     timeCreated: number;
 }>;
 
@@ -44,6 +57,7 @@ type Rect = Readonly<{
 
 type Body = Rect &
     ObjectId &
+    TimeStamp &
     Readonly<{
         viewType: ViewType;
         vel: Vec;
@@ -58,11 +72,12 @@ type State = Readonly<{
     time: number;
     pipes: ReadonlyArray<Body>;
     exit: ReadonlyArray<Body>;
+    objCount: number;
 }>;
 
 type ParsedPipe = Readonly<{
-    gap_y: String;
-    gap_height: String;
+    gap_y: number;
+    gap_height: number;
     time: number;
 }>;
 
