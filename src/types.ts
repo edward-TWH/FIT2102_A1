@@ -42,7 +42,7 @@ const Constants = {
 type ViewType = "bird" | "pipe";
 
 type ObjectId = Readonly<{
-    id: String;
+    id: string;
 }>;
 
 type TimeStamp = Readonly<{
