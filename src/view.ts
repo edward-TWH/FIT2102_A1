@@ -53,14 +53,20 @@ const render = (): ((s: State) => void) => {
     const gameOver = document.querySelector("#gameOver") as SVGElement;
     const container = document.querySelector("#main") as HTMLElement;
 
-    // Add birb to the main grid canvas
+    const livesText = document.querySelector("#livesText") as HTMLElement;
+    const scoreText = document.querySelector("#scoreText") as HTMLElement;
+    const svg = document.querySelector("#svgCanvas") as HTMLElement;
+
     const birdImg = createSvgElement(svg.namespaceURI, "image", {
         href: "assets/birb.png",
         x: `${Viewport.CANVAS_WIDTH * 0.3 - Birb.WIDTH / 2}`,
         y: `${Viewport.CANVAS_HEIGHT / 2 - Birb.HEIGHT / 2}`,
         width: `${Birb.WIDTH}`,
         height: `${Birb.HEIGHT}`,
+        id: "0",
     });
+
+    svg.appendChild(birdImg);
 
     /**
      * Renders the current state to the canvas.
@@ -70,11 +76,6 @@ const render = (): ((s: State) => void) => {
      * @param s Current state
      */
     return (s: State) => {
-        // Text fields
-        const livesText = document.querySelector("#livesText") as HTMLElement,
-            scoreText = document.querySelector("#scoreText") as HTMLElement,
-            svg = document.querySelector("#svgCanvas") as SVGSVGElement;
-
         const updateBodyView = (rootSVG: HTMLElement) => (b: Body) => {
             function createBodyView() {
                 const v = createSvgElement(svg.namespaceURI, b.viewType, {
@@ -83,18 +84,21 @@ const render = (): ((s: State) => void) => {
                     width: String(b.width),
                     height: String(b.height),
                     id: b.id,
+                    href: b.viewType === "image" ? "assets/birb.png" : "#0",
                 });
+                v.classList.add(b.viewType);
                 rootSVG.append(v);
                 return v;
             }
 
             const v = document.getElementById(b.id) || createBodyView();
-            attr(v, { x: b.pos.x, y: b.pos.y });
+            attr(v, { transform: `translate(${b.pos.x}, ${b.pos.y})` });
         };
         livesText.textContent = `${s.lives}`;
         scoreText.textContent = `${s.score}`;
 
-        birdImg.setAttribute("transform", `translate(0, ${s.bird.pos.y})`);
+        updateBodyView(svg)(s.bird);
+        s.pipes.forEach(updateBodyView(svg));
         console.log(s);
     };
 };
