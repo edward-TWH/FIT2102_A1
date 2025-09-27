@@ -39,7 +39,7 @@ const Constants = {
 } as const; // State processing
 
 /** Types and interfaces */
-type ViewType = "bird" | "pipe";
+type ViewType = "image" | "rect";
 
 type ObjectId = Readonly<{
     id: string;
