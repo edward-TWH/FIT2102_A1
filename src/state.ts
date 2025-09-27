@@ -111,18 +111,19 @@ const createRect =
     });
 
 // TODO: Write a composable function createRect for creating pipes
-const createPipe = createRect("pipe")(Constants.PIPE_SPEED);
+const createPipe = createRect("rect")(Constants.PIPE_SPEED);
 
 function createBird(): Body {
     return {
         id: "0",
         timeCreated: 0,
-        viewType: "bird",
+        viewType: "image",
         pos: new Vec(),
         width: Birb.WIDTH,
         height: Birb.HEIGHT,
         vel: new Vec(),
         acc: Constants.GRAVITY,
+        href: "assets/birb.png",
     };
 }
 
