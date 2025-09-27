@@ -62,6 +62,7 @@ type Body = Rect &
         viewType: ViewType;
         vel: Vec;
         acc: Vec;
+        href?: string;
     }>;
 
 type State = Readonly<{
