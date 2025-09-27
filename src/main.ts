@@ -35,7 +35,7 @@ import { Constants, State, Key, Viewport } from "./types";
 import { createPipe, initialState, SpawnPipes } from "./state";
 import { Flap, Tick, Bounce } from "./state";
 import { render } from "./view";
-import { parseCSV, Vec } from "./util";
+import { Vec } from "./util";
 
 export const state$ = (csvContents: string): Observable<State> => {
     /** User input */
@@ -65,7 +65,7 @@ export const state$ = (csvContents: string): Observable<State> => {
                 }) as const,
         ),
         mergeMap(({ gap_y, gap_height, time }) =>
-            timer(time).pipe(
+            timer(time * 1000).pipe(
                 map(
                     _ =>
                         new SpawnPipes({
