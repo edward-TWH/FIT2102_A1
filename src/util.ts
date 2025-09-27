@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 
-export { Vec, parseCSV, attr };
+export { Vec, attr };
 
 /**
  * Class representing a 2D vector
@@ -19,7 +19,7 @@ class Vec {
  * parses the contents from a csv request WIP
  * @param contents
  */
-function parseCSV(contents: String): Observable<Body> {}
+//function parseCSV(contents: String): Observable<Body> {}
 
 /**
  * set a number of attributes on an Element at once
