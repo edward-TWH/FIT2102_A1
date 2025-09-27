@@ -61,7 +61,6 @@ const render = (): ((s: State) => void) => {
         width: `${Birb.WIDTH}`,
         height: `${Birb.HEIGHT}`,
     });
-    svg.appendChild(birdImg);
 
     /**
      * Renders the current state to the canvas.
@@ -76,15 +75,22 @@ const render = (): ((s: State) => void) => {
             scoreText = document.querySelector("#scoreText") as HTMLElement,
             svg = document.querySelector("#svgCanvas") as SVGSVGElement;
 
-        const createBodyView = (b: Body) => {
-            const v = createSvgElement(svg.namespaceURI, b.viewType, {
-                x: String(b.pos.x),
-                y: String(b.pos.y),
-                width: String(b.width),
-                height: String(b.height),
-            });
-        };
+        const updateBodyView = (rootSVG: HTMLElement) => (b: Body) => {
+            function createBodyView() {
+                const v = createSvgElement(svg.namespaceURI, b.viewType, {
+                    x: String(b.pos.x),
+                    y: String(b.pos.y),
+                    width: String(b.width),
+                    height: String(b.height),
+                    id: b.id,
+                });
+                rootSVG.append(v);
+                return v;
+            }
 
+            const v = document.getElementById(b.id) || createBodyView();
+            attr(v, { x: b.pos.x, y: b.pos.y });
+        };
         livesText.textContent = `${s.lives}`;
         scoreText.textContent = `${s.score}`;
 
