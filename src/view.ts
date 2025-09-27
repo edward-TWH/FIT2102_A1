@@ -1,4 +1,6 @@
 import { State, Viewport, Birb, Constants } from "./types";
+import { Body } from "./types";
+import { attr } from "./util";
 
 export { render };
 
@@ -51,11 +53,6 @@ const render = (): ((s: State) => void) => {
     const gameOver = document.querySelector("#gameOver") as SVGElement;
     const container = document.querySelector("#main") as HTMLElement;
 
-    // Text fields
-    const livesText = document.querySelector("#livesText") as HTMLElement;
-    const scoreText = document.querySelector("#scoreText") as HTMLElement;
-
-    const svg = document.querySelector("#svgCanvas") as SVGSVGElement;
     // Add birb to the main grid canvas
     const birdImg = createSvgElement(svg.namespaceURI, "image", {
         href: "assets/birb.png",
@@ -66,35 +63,6 @@ const render = (): ((s: State) => void) => {
     });
     svg.appendChild(birdImg);
 
-    // Draw a static pipe as a demonstration
-    const pipeGapY = 200; // vertical center of the gap
-    const pipeGapHeight = 100;
-
-    // Top pipe
-    const pipeTop = createSvgElement(svg.namespaceURI, "rect", {
-        x: "150",
-        y: "0",
-        width: `${Constants.PIPE_WIDTH}`,
-        height: `${pipeGapY - pipeGapHeight / 2}`,
-        fill: "green",
-    });
-
-    // Bottom pipe
-    const pipeBottom = createSvgElement(svg.namespaceURI, "rect", {
-        x: "150",
-        y: `${pipeGapY + pipeGapHeight / 2}`,
-        width: `${Constants.PIPE_WIDTH}`,
-        height: `${Viewport.CANVAS_HEIGHT - (pipeGapY + pipeGapHeight / 2)}`,
-        fill: "green",
-    });
-
-    svg.appendChild(pipeTop);
-    svg.appendChild(pipeBottom);
-
-    svg.setAttribute(
-        "viewBox",
-        `0 0 ${Viewport.CANVAS_WIDTH} ${Viewport.CANVAS_HEIGHT}`,
-    );
     /**
      * Renders the current state to the canvas.
      *
@@ -103,6 +71,20 @@ const render = (): ((s: State) => void) => {
      * @param s Current state
      */
     return (s: State) => {
+        // Text fields
+        const livesText = document.querySelector("#livesText") as HTMLElement,
+            scoreText = document.querySelector("#scoreText") as HTMLElement,
+            svg = document.querySelector("#svgCanvas") as SVGSVGElement;
+
+        const createBodyView = (b: Body) => {
+            const v = createSvgElement(svg.namespaceURI, b.viewType, {
+                x: String(b.pos.x),
+                y: String(b.pos.y),
+                width: String(b.width),
+                height: String(b.height),
+            });
+        };
+
         livesText.textContent = `${s.lives}`;
         scoreText.textContent = `${s.score}`;
 

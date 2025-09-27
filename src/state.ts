@@ -12,7 +12,8 @@ import {
 } from "./types";
 import { Vec } from "./util";
 import { ParsedPipe } from "./types";
-export { Tick, Flap, Bounce, initialState, createPipe };
+import { pipe } from "rxjs";
+export { Tick, Flap, Bounce, initialState, createPipe, SpawnPipes };
 
 class Tick implements Action {
     /**
@@ -27,6 +28,7 @@ class Tick implements Action {
             ...s,
             time: this.elapsed,
             bird: Tick.moveBody(s.bird),
+            pipes: s.pipes.map(Tick.moveBody),
         } as const;
     }
 
@@ -59,10 +61,7 @@ class Bounce implements Action {
 }
 
 class SpawnPipes implements Action {
-    constructor(
-        public readonly pipe: ParsedPipe,
-        public readonly elapsed: number,
-    ) {}
+    constructor(public readonly pipe: ParsedPipe) {}
     static createTopPipe = (pipe: ParsedPipe) => {
         // return function composed with rect
         const width = Constants.PIPE_WIDTH,

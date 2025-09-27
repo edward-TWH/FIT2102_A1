@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 
-export { Vec, parseCSV };
+export { Vec, parseCSV, attr };
 
 /**
  * Class representing a 2D vector
