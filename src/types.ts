@@ -41,6 +41,7 @@ const Constants = {
         Viewport.CANVAS_WIDTH * 0.3 - Birb.WIDTH / 2,
         Viewport.CANVAS_HEIGHT / 2 - Birb.HEIGHT / 2,
     ),
+    FLEP_VEL: new Vec(0, -7),
 } as const; // State processing
 
 /** Types and interfaces */
