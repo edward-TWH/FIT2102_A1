@@ -9,6 +9,7 @@ import {
     Rect,
     Viewport,
     TimeStamp,
+    Optional,
 } from "./types";
 import { Vec } from "./util";
 import { ParsedPipe } from "./types";
@@ -107,6 +108,7 @@ class SpawnPipes implements Action {
 
 const createRect =
     (viewType: ViewType) =>
+    (opts: Optional) =>
     (vel: Vec) =>
     (rect: Rect) =>
     (t: TimeStamp) =>
@@ -115,13 +117,14 @@ const createRect =
         ...t,
         ...oid,
         ...rect,
+        ...opts,
         vel: vel,
         acc: new Vec(),
         pos_delta: new Vec(),
     });
 
 // TODO: Write a composable function createRect for creating pipes
-const createPipe = createRect("rect")(Constants.PIPE_VEL);
+const createPipe = createRect("rect")({ fill: "green" })(Constants.PIPE_VEL);
 
 function createBird(): Body {
     return {
