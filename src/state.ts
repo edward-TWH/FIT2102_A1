@@ -36,6 +36,7 @@ class Tick implements Action {
         ...b,
         pos: b.pos.add(b.vel),
         vel: b.vel.add(b.acc),
+        pos_delta: b.pos_delta.add(b.vel),
     });
 }
 
@@ -67,18 +68,22 @@ class SpawnPipes implements Action {
         const width = Constants.PIPE_WIDTH,
             height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
             time = pipe.time;
-        return createPipe({ pos: new Vec(0, 0), width: width, height: height })(
-            { timeCreated: time },
-        );
+        return createPipe({
+            pos: new Vec(Viewport.CANVAS_WIDTH, 0),
+            width: width,
+            height: height,
+        })({ timeCreated: time });
     };
     static createBotPipe = (pipe: ParsedPipe) => {
         // return function composed with rect
         const width = Constants.PIPE_WIDTH,
             height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
             time = pipe.time;
-        return createPipe({ pos: new Vec(0, 0), width: width, height: height })(
-            { timeCreated: time },
-        );
+        return createPipe({
+            pos: new Vec(Viewport.CANVAS_WIDTH, height),
+            width: width,
+            height: height,
+        })({ timeCreated: time });
     };
     apply(s: State): State {
         // call create functions with timestamps, which completes signature
@@ -108,21 +113,23 @@ const createRect =
         ...rect,
         vel: vel,
         acc: new Vec(),
+        pos_delta: new Vec(),
     });
 
 // TODO: Write a composable function createRect for creating pipes
-const createPipe = createRect("rect")(Constants.PIPE_SPEED);
+const createPipe = createRect("rect")(Constants.PIPE_VEL);
 
 function createBird(): Body {
     return {
         id: "0",
         timeCreated: 0,
         viewType: "image",
-        pos: new Vec(),
+        pos: new Vec(Constants.BIRD_START_POS.x, Constants.BIRD_START_POS.y),
         width: Birb.WIDTH,
         height: Birb.HEIGHT,
         vel: new Vec(),
         acc: Constants.GRAVITY,
+        pos_delta: new Vec(),
         href: "assets/birb.png",
     };
 }
