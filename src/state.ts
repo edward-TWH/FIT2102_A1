@@ -47,7 +47,7 @@ class Flap implements Action {
             ...s,
             bird: {
                 ...s.bird,
-                vel: Constants.FLEP_VEL,
+                vel: Constants.FLAP_VEL,
             },
         } as const;
     }
