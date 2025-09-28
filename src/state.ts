@@ -66,24 +66,28 @@ class SpawnPipes implements Action {
     static createTopPipe = (pipe: ParsedPipe) => {
         // return function composed with rect
         const width = Constants.PIPE_WIDTH,
-            height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
-            time = pipe.time;
+            gap_coord = pipe.gap_y * Viewport.CANVAS_HEIGHT,
+            gap_height = pipe.gap_height * Viewport.CANVAS_HEIGHT;
         return createPipe({
             start_pos: new Vec(Viewport.CANVAS_WIDTH, 0),
             width: width,
-            height: height,
-        })({ timeCreated: time });
+            height: gap_coord - gap_height / 2,
+        })({ timeCreated: pipe.time });
     };
     static createBotPipe = (pipe: ParsedPipe) => {
         // return function composed with rect
         const width = Constants.PIPE_WIDTH,
-            height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
-            time = pipe.time;
+            gap_coord = pipe.gap_y * Viewport.CANVAS_HEIGHT,
+            gap_height = pipe.gap_height * Viewport.CANVAS_HEIGHT;
+
         return createPipe({
-            start_pos: new Vec(Viewport.CANVAS_WIDTH, height),
+            start_pos: new Vec(
+                Viewport.CANVAS_WIDTH,
+                gap_coord + gap_height / 2,
+            ),
             width: width,
-            height: height,
-        })({ timeCreated: time });
+            height: Viewport.CANVAS_HEIGHT - (gap_coord + gap_height / 2),
+        })({ timeCreated: pipe.time });
     };
     apply(s: State): State {
         // call create functions with timestamps, which completes signature
