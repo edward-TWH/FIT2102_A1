@@ -1,3 +1,4 @@
+import { reportUnhandledError } from "rxjs/internal/util/reportUnhandledError";
 import { State, Viewport, Birb, Constants } from "./types";
 import { Body } from "./types";
 import { attr } from "./util";
@@ -84,7 +85,8 @@ const render = (): ((s: State) => void) => {
                     width: String(b.width),
                     height: String(b.height),
                     id: b.id,
-                    href: b.viewType === "image" ? "assets/birb.png" : "#0",
+                    ...(b.href == undefined ? {} : { href: b.href }),
+                    ...(b.fill == undefined ? {} : { fill: b.fill }),
                 });
                 v.classList.add(b.viewType);
                 rootSVG.append(v);
@@ -101,6 +103,5 @@ const render = (): ((s: State) => void) => {
 
         updateBodyView(svg)(s.bird);
         s.pipes.forEach(updateBodyView(svg));
-        console.log(s);
     };
 };

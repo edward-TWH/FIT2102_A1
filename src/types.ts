@@ -62,6 +62,7 @@ type Rect = Readonly<{
 type Body = Rect &
     ObjectId &
     TimeStamp &
+    Optional &
     Readonly<{
         viewType: ViewType;
         vel: Vec;
@@ -85,6 +86,11 @@ type ParsedPipe = Readonly<{
     gap_y: number;
     gap_height: number;
     time: number;
+}>;
+
+type Optional = Readonly<{
+    href?: string | undefined;
+    fill?: string | undefined;
 }>;
 
 interface Action {
