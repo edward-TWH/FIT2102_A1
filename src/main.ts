@@ -28,6 +28,7 @@ import {
     skip,
     switchMap,
     take,
+    tap,
     timer,
 } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
@@ -55,7 +56,7 @@ export const state$ = (csvContents: string): Observable<State> => {
 
     const pipe$ = from(csvContents.split(/\r?\n/)).pipe(
         skip(1),
-        mergeMap(row => row.split(",")),
+        map(row => row.split(",")),
         map(
             column =>
                 ({
