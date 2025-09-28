@@ -54,7 +54,7 @@ type TimeStamp = Readonly<{
 }>;
 
 type Rect = Readonly<{
-    pos: Vec; // Note that this represents the top left corner of the element
+    start_pos: Vec; // Note that this represents the top left corner of the element
     width: number;
     height: number;
 }>;

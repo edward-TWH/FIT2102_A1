@@ -79,8 +79,8 @@ const render = (): ((s: State) => void) => {
         const updateBodyView = (rootSVG: HTMLElement) => (b: Body) => {
             function createBodyView() {
                 const v = createSvgElement(svg.namespaceURI, b.viewType, {
-                    x: String(b.pos.x),
-                    y: String(b.pos.y),
+                    x: String(b.start_pos.x),
+                    y: String(b.start_pos.y),
                     width: String(b.width),
                     height: String(b.height),
                     id: b.id,

@@ -34,7 +34,7 @@ class Tick implements Action {
 
     static moveBody = (b: Body): Body => ({
         ...b,
-        pos: b.pos.add(b.vel),
+        start_pos: b.start_pos.add(b.vel),
         vel: b.vel.add(b.acc),
         pos_delta: b.pos_delta.add(b.vel),
     });
@@ -69,7 +69,7 @@ class SpawnPipes implements Action {
             height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
             time = pipe.time;
         return createPipe({
-            pos: new Vec(Viewport.CANVAS_WIDTH, 0),
+            start_pos: new Vec(Viewport.CANVAS_WIDTH, 0),
             width: width,
             height: height,
         })({ timeCreated: time });
@@ -80,7 +80,7 @@ class SpawnPipes implements Action {
             height = 0.5 * (1 - pipe.gap_height) * Viewport.CANVAS_HEIGHT,
             time = pipe.time;
         return createPipe({
-            pos: new Vec(Viewport.CANVAS_WIDTH, height),
+            start_pos: new Vec(Viewport.CANVAS_WIDTH, height),
             width: width,
             height: height,
         })({ timeCreated: time });
@@ -124,7 +124,10 @@ function createBird(): Body {
         id: "0",
         timeCreated: 0,
         viewType: "image",
-        pos: new Vec(Constants.BIRD_START_POS.x, Constants.BIRD_START_POS.y),
+        start_pos: new Vec(
+            Constants.BIRD_START_POS.x,
+            Constants.BIRD_START_POS.y,
+        ),
         width: Birb.WIDTH,
         height: Birb.HEIGHT,
         vel: new Vec(),
