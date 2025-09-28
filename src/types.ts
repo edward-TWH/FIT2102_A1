@@ -13,6 +13,7 @@ export type {
     ObjectId,
     ParsedPipe,
     TimeStamp,
+    Optional,
 };
 
 import { Vec } from "./util";
