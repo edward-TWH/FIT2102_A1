@@ -35,7 +35,11 @@ const Constants = {
     START_LIVES: 3,
     START_SCORE: 0,
     START_TIME: 0,
-    PIPE_SPEED: new Vec(5, 0),
+    PIPE_VEL: new Vec(-5, 0),
+    BIRD_START_POS: new Vec(
+        Viewport.CANVAS_WIDTH * 0.3 - Birb.WIDTH / 2,
+        Viewport.CANVAS_HEIGHT / 2 - Birb.HEIGHT / 2,
+    ),
 } as const; // State processing
 
 /** Types and interfaces */
@@ -62,6 +66,7 @@ type Body = Rect &
         viewType: ViewType;
         vel: Vec;
         acc: Vec;
+        pos_delta: Vec;
         href?: string;
     }>;
 
