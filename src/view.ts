@@ -92,7 +92,9 @@ const render = (): ((s: State) => void) => {
             }
 
             const v = document.getElementById(b.id) || createBodyView();
-            attr(v, { transform: `translate(${b.pos.x}, ${b.pos.y})` });
+            attr(v, {
+                transform: `translate(${b.pos_delta.x}, ${b.pos_delta.y})`,
+            });
         };
         livesText.textContent = `${s.lives}`;
         scoreText.textContent = `${s.score}`;
