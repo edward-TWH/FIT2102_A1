@@ -10,6 +10,7 @@ import {
     Viewport,
     TimeStamp,
     Optional,
+    CollisionSurface,
 } from "./types";
 import { Vec } from "./util";
 import { ParsedPipe } from "./types";
@@ -39,6 +40,44 @@ class Tick implements Action {
         vel: b.vel.add(b.acc),
         relative_pos: b.relative_pos.add(b.vel),
     });
+
+    static detectRectCollision =
+        (b1: Body) =>
+        (b2: Body): boolean => {
+            const l1 = b1.start_pos.add(b1.relative_pos),
+                l2 = b2.start_pos.add(b2.relative_pos),
+                r1 = l1.add(new Vec(b1.width, b1.height)),
+                r2 = l2.add(new Vec(b2.width, b2.height));
+
+            if (l1.x > r2.x || l2.x > r1.x) {
+                return false;
+            }
+
+            if (r1.y > l2.y || r2.y > l1.y) {
+                return false;
+            }
+
+            return true;
+        };
+
+    static detectCollisionWithPipe =
+        (bird: Body) =>
+        (pipe: Body): CollisionSurface | null => {
+            if (Tick.detectRectCollision(bird)(pipe)) {
+                return pipe.location ? pipe.location : null;
+            }
+            return null;
+        };
+
+    static detectCollisionWithEdge = (bird: Body): CollisionSurface | null => {
+        const absolute_pos = bird.start_pos.add(bird.relative_pos);
+        if (absolute_pos.y < 0) {
+            return "ceiling";
+        } else if (absolute_pos.y > Viewport.CANVAS_HEIGHT) {
+            return "floor";
+        }
+        return null;
+    };
 }
 
 class Flap implements Action {
@@ -64,17 +103,19 @@ class Bounce implements Action {
 
 class SpawnPipes implements Action {
     constructor(public readonly pipe: ParsedPipe) {}
+
     static createTopPipe = (pipe: ParsedPipe) => {
-        // return function composed with rect
         const width = Constants.PIPE_WIDTH,
             gap_coord = pipe.gap_y * Viewport.CANVAS_HEIGHT,
             gap_height = pipe.gap_height * Viewport.CANVAS_HEIGHT;
+
         return createPipe({
             start_pos: new Vec(Viewport.CANVAS_WIDTH, 0),
             width: width,
             height: gap_coord - gap_height / 2,
-        })({ timeCreated: pipe.time });
+        })({ timeCreated: pipe.time })({ fill: "green", location: "top_pipe" });
     };
+
     static createBotPipe = (pipe: ParsedPipe) => {
         // return function composed with rect
         const width = Constants.PIPE_WIDTH,
@@ -88,7 +129,7 @@ class SpawnPipes implements Action {
             ),
             width: width,
             height: Viewport.CANVAS_HEIGHT - (gap_coord + gap_height / 2),
-        })({ timeCreated: pipe.time });
+        })({ timeCreated: pipe.time })({ fill: "green", location: "bot_pipe" });
     };
     apply(s: State): State {
         // call create functions with timestamps, which completes signature
@@ -108,10 +149,10 @@ class SpawnPipes implements Action {
 
 const createRect =
     (viewType: ViewType) =>
-    (opts: Optional) =>
     (vel: Vec) =>
     (rect: Rect) =>
     (t: TimeStamp) =>
+    (opts: Optional) =>
     (oid: ObjectId): Body => ({
         viewType: viewType,
         ...t,
@@ -124,7 +165,7 @@ const createRect =
     });
 
 // TODO: Write a composable function createRect for creating pipes
-const createPipe = createRect("rect")({ fill: "green" })(Constants.PIPE_VEL);
+const createPipe = createRect("rect")(Constants.PIPE_VEL);
 
 function createBird(): Body {
     return {
