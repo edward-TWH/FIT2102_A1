@@ -95,6 +95,8 @@ type Optional = Readonly<{
     fill?: string | undefined;
 }>;
 
+type CollisionSurface = "floor" | "ceiling" | "top_pipe" | "bot_pipe";
+
 interface Action {
     apply(s: State): State;
 }
