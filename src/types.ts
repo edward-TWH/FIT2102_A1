@@ -92,8 +92,9 @@ type ParsedPipe = Readonly<{
 }>;
 
 type Optional = Readonly<{
-    href?: string | undefined;
-    fill?: string | undefined;
+    href?: string;
+    fill?: string;
+    location?: CollisionSurface;
 }>;
 
 type CollisionSurface = "floor" | "ceiling" | "top_pipe" | "bot_pipe";
