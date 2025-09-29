@@ -14,6 +14,7 @@ export type {
     ParsedPipe,
     TimeStamp,
     Optional,
+    CollisionSurface,
 };
 
 import { Vec } from "./util";
