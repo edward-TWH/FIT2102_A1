@@ -16,12 +16,6 @@ class Vec {
 }
 
 /**
- * parses the contents from a csv request WIP
- * @param contents
- */
-//function parseCSV(contents: String): Observable<Body> {}
-
-/**
  * set a number of attributes on an Element at once
  * @param e the Element
  * @param o a property bag
