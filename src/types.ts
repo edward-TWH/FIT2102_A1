@@ -69,7 +69,7 @@ type Body = Rect &
         viewType: ViewType;
         vel: Vec;
         acc: Vec;
-        pos_delta: Vec;
+        relative_pos: Vec;
         href?: string;
     }>;
 

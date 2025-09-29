@@ -95,7 +95,7 @@ const render = (): ((s: State) => void) => {
 
             const v = document.getElementById(b.id) || createBodyView();
             attr(v, {
-                transform: `translate(${b.pos_delta.x}, ${b.pos_delta.y})`,
+                transform: `translate(${b.relative_pos.x}, ${b.relative_pos.y})`,
             });
         };
         livesText.textContent = `${s.lives}`;

@@ -37,7 +37,7 @@ class Tick implements Action {
         ...b,
         start_pos: b.start_pos.add(b.vel),
         vel: b.vel.add(b.acc),
-        pos_delta: b.pos_delta.add(b.vel),
+        relative_pos: b.relative_pos.add(b.vel),
     });
 }
 
@@ -120,7 +120,7 @@ const createRect =
         ...opts,
         vel: vel,
         acc: new Vec(),
-        pos_delta: new Vec(),
+        relative_pos: new Vec(),
     });
 
 // TODO: Write a composable function createRect for creating pipes
@@ -139,7 +139,7 @@ function createBird(): Body {
         height: Birb.HEIGHT,
         vel: new Vec(),
         acc: Constants.GRAVITY,
-        pos_delta: new Vec(),
+        relative_pos: new Vec(),
         href: "assets/birb.png",
     };
 }
