@@ -77,6 +77,10 @@ const render = (): ((s: State) => void) => {
      * @param s Current state
      */
     return (s: State) => {
+        if (s.gameEnd) {
+            show(gameOver);
+            return;
+        }
         const updateBodyView = (rootSVG: HTMLElement) => (b: Body) => {
             function createBodyView() {
                 const v = createSvgElement(svg.namespaceURI, b.viewType, {
