@@ -80,7 +80,8 @@ type State = Readonly<{
     bird: Body;
     gameEnd: boolean;
     time: number;
-    pipes: ReadonlyArray<Body>;
+    top_pipes: ReadonlyArray<Body>;
+    bot_pipes: ReadonlyArray<Body>;
     exit: ReadonlyArray<Body>;
     objCount: number;
 }>;
