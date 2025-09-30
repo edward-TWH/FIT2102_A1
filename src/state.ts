@@ -75,7 +75,11 @@ class Tick implements Action {
                             ? new Vec(0, -randSpeed)
                             : new Vec(0, randSpeed);
 
-                    return { ...s, bird: { ...s.bird, vel: newVel } };
+                    return {
+                        ...s,
+                        lives: s.lives - 1,
+                        bird: { ...s.bird, vel: newVel },
+                    };
                 };
             return bounce(s.bird)(d);
         };
