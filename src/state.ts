@@ -11,6 +11,7 @@ import {
     TimeStamp,
     Optional,
     CollisionSurface,
+    Direction,
 } from "./types";
 import { Vec, RNG } from "./util";
 import { ParsedPipe } from "./types";
@@ -26,31 +27,91 @@ class Tick implements Action {
     constructor(public readonly elapsed: number) {}
 
     apply(s: State): State {
+        const s2 = Tick.handleCollisons(s);
         return {
-            ...s,
+            ...s2,
             time: this.elapsed,
-            bird: Tick.moveBody(s.bird),
-            top_pipes: s.top_pipes.map(Tick.moveBody),
-            bot_pipes: s.bot_pipes.map(Tick.moveBody),
+            bird: Tick.moveBody(s2.bird),
+            top_pipes: s2.top_pipes.map(Tick.moveBody),
+            bot_pipes: s2.bot_pipes.map(Tick.moveBody),
         } as const;
     }
 
     static moveBody = (b: Body): Body => ({
         ...b,
-        start_pos: b.start_pos.add(b.vel),
         vel: b.vel.add(b.acc),
         relative_pos: b.relative_pos.add(b.vel),
     });
 
-    static handleCollisons = (s: State): State => {};
+    static detectRectCollision =
+        (b1: Body) =>
+        (b2: Body): boolean => {
+            const l1 = b1.start_pos.add(b1.relative_pos),
+                l2 = b2.start_pos.add(b2.relative_pos),
+                r1 = l1.add(new Vec(b1.width, b1.height)),
+                r2 = l2.add(new Vec(b2.width, b2.height));
 
-    static checkCollideWithTopPipe = {};
+            if (l1.x > r2.x || l2.x > r1.x) {
+                return false;
+            }
 
-    static checkCollideWithBotPipe = {};
+            if (r1.y > l2.y || r2.y > l1.y) {
+                return false;
+            }
 
-    static checkCollideWithCeiling = {};
+            return true;
+        };
 
-    static checkCollideWithFloor = {};
+    static handleCollisons = (s: State): State => {
+        // helper functions
+        const bounceBird = (d: Direction): State => {
+            const bounce =
+                (bird: Body) =>
+                (direction: Direction): State => {
+                    const randSpeed = RNG.scale(RNG.hash(s.time)) * 5 + 15;
+
+                    const newVel =
+                        direction == "up"
+                            ? new Vec(0, -randSpeed)
+                            : new Vec(0, randSpeed);
+
+                    return { ...s, bird: { ...s.bird, vel: newVel } };
+                };
+            return bounce(s.bird)(d);
+        };
+
+        const checkCollidewithPipe =
+            (bird: Body) =>
+            (pipe: Body): boolean => {
+                return this.detectRectCollision(bird)(pipe);
+            };
+
+        const checkCollideWithCeiling = (bird: Body): boolean => {
+            return bird.start_pos.add(bird.relative_pos).y < 0;
+        };
+
+        const checkCollideWithFloor = (bird: Body): boolean => {
+            return (
+                bird.start_pos.add(bird.relative_pos).y > Viewport.CANVAS_HEIGHT
+            );
+        };
+
+        // main code
+        // something wrong with pipe check
+        const collideTopPipe =
+            s.top_pipes.filter(checkCollidewithPipe(s.bird)).length > 0;
+        const collideBotPipe =
+            s.bot_pipes.filter(checkCollidewithPipe(s.bird)).length > 0;
+        const collideCeiling = checkCollideWithCeiling(s.bird);
+        const collideFloor = checkCollideWithFloor(s.bird);
+
+        if (collideTopPipe || collideCeiling) {
+            return bounceBird("down");
+        } else if (collideBotPipe || collideFloor) {
+            return bounceBird("up");
+        }
+        return s;
+    };
 }
 
 class Flap implements Action {
@@ -61,25 +122,6 @@ class Flap implements Action {
                 ...s.bird,
                 vel: Constants.FLAP_VEL,
             },
-        } as const;
-    }
-}
-
-class Bounce implements Action {
-    constructor(public readonly surface: CollisionSurface) {}
-
-    apply(s: State): State {
-        const speed = RNG.scale(RNG.hash(s.time)) * 5 + 15;
-        return {
-            ...s,
-            bird: {
-                ...s.bird,
-                vel:
-                    this.surface in ["ceiling", "top_pipe"]
-                        ? new Vec(0, speed)
-                        : new Vec(0, -speed),
-            },
-            lives: s.lives - 1,
         } as const;
     }
 }
