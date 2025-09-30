@@ -104,7 +104,6 @@ if (typeof window !== "undefined") {
             throw err;
         }),
     );
-
     // Observable: wait for first user click
     const click$ = fromEvent(document.body, "mousedown").pipe(take(1));
 

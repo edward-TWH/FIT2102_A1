@@ -12,7 +12,7 @@ import {
     Optional,
     CollisionSurface,
 } from "./types";
-import { Vec } from "./util";
+import { Vec, RNG } from "./util";
 import { ParsedPipe } from "./types";
 import { pipe } from "rxjs";
 export { Tick, Flap, Bounce, initialState, createPipe, SpawnPipes };
@@ -26,11 +26,12 @@ class Tick implements Action {
     constructor(public readonly elapsed: number) {}
 
     apply(s: State): State {
+        const s2 = Tick.handleCollisions(s);
         return {
-            ...s,
+            ...s2,
             time: this.elapsed,
-            bird: Tick.moveBody(s.bird),
-            pipes: s.pipes.map(Tick.moveBody),
+            bird: Tick.moveBody(s2.bird),
+            pipes: s2.pipes.map(Tick.moveBody),
         } as const;
     }
 
@@ -40,6 +41,22 @@ class Tick implements Action {
         vel: b.vel.add(b.acc),
         relative_pos: b.relative_pos.add(b.vel),
     });
+
+    static handleCollisions = (s: State): State => {
+        const collision =
+            s.pipes.length > 0
+                ? s.pipes
+                      .map(this.detectCollisionWithPipe(s.bird))
+                      .filter(e => e !== null)[0]
+                : this.detectCollisionWithEdge(s.bird);
+
+        if (collision) {
+            console.log(collision);
+            console.log(s);
+            return new Bounce(collision).apply(s);
+        }
+        return s;
+    };
 
     static detectRectCollision =
         (b1: Body) =>
@@ -93,10 +110,20 @@ class Flap implements Action {
 }
 
 class Bounce implements Action {
+    constructor(public readonly surface: CollisionSurface) {}
+
     apply(s: State): State {
-        /** Placeholder */
+        const speed = RNG.scale(RNG.hash(s.time)) * 5 + 15;
         return {
             ...s,
+            bird: {
+                ...s.bird,
+                vel:
+                    this.surface in ["ceiling", "top_pipe"]
+                        ? new Vec(0, speed)
+                        : new Vec(0, -speed),
+            },
+            lives: s.lives - 1,
         } as const;
     }
 }

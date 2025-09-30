@@ -43,7 +43,7 @@ abstract class RNG {
     public static hash = (seed: number) => (RNG.a * seed + RNG.c) % RNG.m;
 
     /**
- h    * Takes hash value and scales it to the range [-1, 1]
+     * Takes hash value and scales it to the range [-1, 1]
      */
     public static scale = (hash: number) => (2 * hash) / (RNG.m - 1) - 1;
 }
