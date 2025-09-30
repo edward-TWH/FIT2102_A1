@@ -16,7 +16,7 @@ import {
 import { Vec, RNG } from "./util";
 import { ParsedPipe } from "./types";
 import { pipe } from "rxjs";
-export { Tick, Flap, Bounce, initialState, createPipe, SpawnPipes };
+export { Tick, Flap, initialState, createPipe, SpawnPipes };
 
 class Tick implements Action {
     /**
@@ -87,13 +87,15 @@ class Tick implements Action {
             };
 
         const checkCollideWithCeiling = (bird: Body): boolean => {
-            return bird.start_pos.add(bird.relative_pos).y < 0;
+            const top_left = bird.start_pos.add(bird.relative_pos);
+            return top_left.y <= 0;
         };
 
         const checkCollideWithFloor = (bird: Body): boolean => {
-            return (
-                bird.start_pos.add(bird.relative_pos).y > Viewport.CANVAS_HEIGHT
-            );
+            const bot_right = bird.start_pos
+                .add(bird.relative_pos)
+                .add(new Vec(bird.width, bird.height));
+            return bot_right.y >= Viewport.CANVAS_HEIGHT;
         };
 
         // main code
