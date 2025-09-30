@@ -41,6 +41,16 @@ class Tick implements Action {
         vel: b.vel.add(b.acc),
         relative_pos: b.relative_pos.add(b.vel),
     });
+
+    static handleCollisons = (s: State): State => {};
+
+    static checkCollideWithTopPipe = {};
+
+    static checkCollideWithBotPipe = {};
+
+    static checkCollideWithCeiling = {};
+
+    static checkCollideWithFloor = {};
 }
 
 class Flap implements Action {
