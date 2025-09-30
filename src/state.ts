@@ -10,7 +10,6 @@ import {
     Viewport,
     TimeStamp,
     Optional,
-    CollisionSurface,
     Direction,
 } from "./types";
 import { Vec, RNG } from "./util";
@@ -146,7 +145,7 @@ class SpawnPipes implements Action {
             start_pos: new Vec(Viewport.CANVAS_WIDTH, 0),
             width: width,
             height: gap_coord - gap_height / 2,
-        })({ timeCreated: pipe.time })({ fill: "green", location: "top_pipe" });
+        })({ timeCreated: pipe.time })({ fill: "green" });
     };
 
     static createBotPipe = (pipe: ParsedPipe) => {
@@ -162,7 +161,7 @@ class SpawnPipes implements Action {
             ),
             width: width,
             height: Viewport.CANVAS_HEIGHT - (gap_coord + gap_height / 2),
-        })({ timeCreated: pipe.time })({ fill: "green", location: "bot_pipe" });
+        })({ timeCreated: pipe.time })({ fill: "green" });
     };
 
     apply(s: State): State {

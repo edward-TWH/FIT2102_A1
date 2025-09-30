@@ -14,7 +14,6 @@ export type {
     ParsedPipe,
     TimeStamp,
     Optional,
-    CollisionSurface,
     Direction,
 };
 
@@ -96,10 +95,7 @@ type ParsedPipe = Readonly<{
 type Optional = Readonly<{
     href?: string;
     fill?: string;
-    location?: CollisionSurface;
 }>;
-
-type CollisionSurface = "floor" | "ceiling" | "top_pipe" | "bot_pipe";
 
 type Direction = "up" | "down";
 
