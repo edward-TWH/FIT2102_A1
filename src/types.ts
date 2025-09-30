@@ -100,6 +100,8 @@ type Optional = Readonly<{
 
 type CollisionSurface = "floor" | "ceiling" | "top_pipe" | "bot_pipe";
 
+type Direction = "up" | "down";
+
 interface Action {
     apply(s: State): State;
 }
