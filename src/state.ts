@@ -55,7 +55,7 @@ class Tick implements Action {
                 return false;
             }
 
-            if (r1.y > l2.y || r2.y > l1.y) {
+            if (r1.y < l2.y || r2.y < l1.y) {
                 return false;
             }
 
@@ -100,6 +100,8 @@ class Tick implements Action {
 
         // main code
         // something wrong with pipe check
+        console.log(s.top_pipes.filter(checkCollidewithPipe(s.bird)));
+        console.log(s.bot_pipes.filter(checkCollidewithPipe(s.bird)));
         const collideTopPipe =
             s.top_pipes.filter(checkCollidewithPipe(s.bird)).length > 0;
         const collideBotPipe =
