@@ -15,6 +15,7 @@ export type {
     TimeStamp,
     Optional,
     CollisionSurface,
+    Direction,
 };
 
 import { Vec } from "./util";

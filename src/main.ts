@@ -34,7 +34,7 @@ import {
 import { fromFetch } from "rxjs/fetch";
 import { Constants, State, Key, Viewport } from "./types";
 import { createPipe, initialState, SpawnPipes } from "./state";
-import { Flap, Tick, Bounce } from "./state";
+import { Flap, Tick } from "./state";
 import { render } from "./view";
 import { Vec } from "./util";
 
