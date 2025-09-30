@@ -26,12 +26,11 @@ class Tick implements Action {
     constructor(public readonly elapsed: number) {}
 
     apply(s: State): State {
-        const s2 = Tick.handleCollisions(s);
         return {
-            ...s2,
+            ...s,
             time: this.elapsed,
-            bird: Tick.moveBody(s2.bird),
-            pipes: s2.pipes.map(Tick.moveBody),
+            bird: Tick.moveBody(s.bird),
+            pipes: s.pipes.map(Tick.moveBody),
         } as const;
     }
 
@@ -41,60 +40,6 @@ class Tick implements Action {
         vel: b.vel.add(b.acc),
         relative_pos: b.relative_pos.add(b.vel),
     });
-
-    static handleCollisions = (s: State): State => {
-        const collision =
-            s.pipes.length > 0
-                ? s.pipes
-                      .map(this.detectCollisionWithPipe(s.bird))
-                      .filter(e => e !== null)[0]
-                : this.detectCollisionWithEdge(s.bird);
-
-        if (collision) {
-            console.log(collision);
-            console.log(s);
-            return new Bounce(collision).apply(s);
-        }
-        return s;
-    };
-
-    static detectRectCollision =
-        (b1: Body) =>
-        (b2: Body): boolean => {
-            const l1 = b1.start_pos.add(b1.relative_pos),
-                l2 = b2.start_pos.add(b2.relative_pos),
-                r1 = l1.add(new Vec(b1.width, b1.height)),
-                r2 = l2.add(new Vec(b2.width, b2.height));
-
-            if (l1.x > r2.x || l2.x > r1.x) {
-                return false;
-            }
-
-            if (r1.y > l2.y || r2.y > l1.y) {
-                return false;
-            }
-
-            return true;
-        };
-
-    static detectCollisionWithPipe =
-        (bird: Body) =>
-        (pipe: Body): CollisionSurface | null => {
-            if (Tick.detectRectCollision(bird)(pipe)) {
-                return pipe.location ? pipe.location : null;
-            }
-            return null;
-        };
-
-    static detectCollisionWithEdge = (bird: Body): CollisionSurface | null => {
-        const absolute_pos = bird.start_pos.add(bird.relative_pos);
-        if (absolute_pos.y < 0) {
-            return "ceiling";
-        } else if (absolute_pos.y > Viewport.CANVAS_HEIGHT) {
-            return "floor";
-        }
-        return null;
-    };
 }
 
 class Flap implements Action {
