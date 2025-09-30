@@ -102,6 +102,7 @@ const render = (): ((s: State) => void) => {
         scoreText.textContent = `${s.score}`;
 
         updateBodyView(svg)(s.bird);
-        s.pipes.forEach(updateBodyView(svg));
+        s.top_pipes.forEach(updateBodyView(svg));
+        s.bot_pipes.forEach(updateBodyView(svg));
     };
 };

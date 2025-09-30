@@ -30,7 +30,8 @@ class Tick implements Action {
             ...s,
             time: this.elapsed,
             bird: Tick.moveBody(s.bird),
-            pipes: s.pipes.map(Tick.moveBody),
+            top_pipes: s.top_pipes.map(Tick.moveBody),
+            bot_pipes: s.bot_pipes.map(Tick.moveBody),
         } as const;
     }
 
@@ -103,16 +104,20 @@ class SpawnPipes implements Action {
             height: Viewport.CANVAS_HEIGHT - (gap_coord + gap_height / 2),
         })({ timeCreated: pipe.time })({ fill: "green", location: "bot_pipe" });
     };
+
     apply(s: State): State {
         // call create functions with timestamps, which completes signature
         return {
             ...s,
-            pipes: [
-                ...s.pipes,
+            top_pipes: [
                 SpawnPipes.createTopPipe(this.pipe)({ id: String(s.objCount) }),
+                ...s.top_pipes,
+            ],
+            bot_pipes: [
                 SpawnPipes.createBotPipe(this.pipe)({
                     id: String(s.objCount + 1),
                 }),
+                ...s.bot_pipes,
             ],
             objCount: s.objCount + 2,
         };
@@ -163,7 +168,8 @@ const initialState: State = {
     gameEnd: false,
     bird: createBird(),
     time: Constants.START_TIME,
-    pipes: [],
+    bot_pipes: [],
+    top_pipes: [],
     exit: [],
     objCount: 1,
 };
