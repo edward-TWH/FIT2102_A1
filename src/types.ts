@@ -32,7 +32,7 @@ const Birb = {
 
 const Constants = {
     PIPE_WIDTH: 50,
-    TICK_RATE_MS: 50, // Might need to change this!
+    TICK_RATE_MS: 50,
     GRAVITY: new Vec(0, 1),
     START_LIVES: 3,
     START_SCORE: 0,
@@ -43,9 +43,11 @@ const Constants = {
         Viewport.CANVAS_HEIGHT / 2 - Birb.HEIGHT / 2,
     ),
     FLAP_VEL: new Vec(0, -7),
-} as const; // State processing
+} as const;
 
 /** Types and interfaces */
+
+// pipes are treated as rects, whereas bird is treated as image
 type ViewType = "image" | "rect";
 
 type ObjectId = Readonly<{
@@ -62,6 +64,7 @@ type Rect = Readonly<{
     height: number;
 }>;
 
+// contains all the state needed for physics calculations
 type Body = Rect &
     ObjectId &
     TimeStamp &
@@ -70,11 +73,12 @@ type Body = Rect &
         viewType: ViewType;
         vel: Vec;
         acc: Vec;
-        relative_pos: Vec;
-        abs_pos: Vec;
+        relative_pos: Vec; // relative position to start position
+        abs_pos: Vec; // absolute position, i.e, start + relative vector
         href?: string;
     }>;
 
+// main game state
 type State = Readonly<{
     lives: number;
     score: number;
@@ -88,12 +92,14 @@ type State = Readonly<{
     nextPipeId: string;
 }>;
 
+// This represents the values extracted from the csv
 type ParsedPipe = Readonly<{
     gap_y: number;
     gap_height: number;
     time: number;
 }>;
 
+// options bag gives flexibility when creating views for the bird and pipes
 type Optional = Readonly<{
     href?: string;
     fill?: string;
@@ -101,10 +107,10 @@ type Optional = Readonly<{
 
 type Direction = "up" | "down";
 
+// Interface for reducing state
 interface Action {
     apply(s: State): State;
 }
 
 // User input
-
 type Key = "Space";
