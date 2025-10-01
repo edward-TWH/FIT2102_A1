@@ -1,7 +1,7 @@
 import { reportUnhandledError } from "rxjs/internal/util/reportUnhandledError";
 import { State, Viewport, Birb, Constants } from "./types";
 import { Body } from "./types";
-import { attr } from "./util";
+import { attr, isNotNullOrUndefined } from "./util";
 
 export { render };
 
@@ -81,6 +81,7 @@ const render = (): ((s: State) => void) => {
             show(gameOver);
             return;
         }
+        //console.log(s.exit);
         const updateBodyView = (rootSVG: HTMLElement) => (b: Body) => {
             function createBodyView() {
                 const v = createSvgElement(svg.namespaceURI, b.viewType, {
@@ -108,5 +109,10 @@ const render = (): ((s: State) => void) => {
         updateBodyView(svg)(s.bird);
         s.top_pipes.forEach(updateBodyView(svg));
         s.bot_pipes.forEach(updateBodyView(svg));
+
+        s.exit
+            .map(o => document.getElementById(o.id))
+            .filter(isNotNullOrUndefined)
+            .forEach(v => svg.removeChild(v));
     };
 };
