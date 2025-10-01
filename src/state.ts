@@ -12,9 +12,9 @@ import {
     Optional,
     Direction,
 } from "./types";
-import { Vec, RNG } from "./util";
+import { Vec, RNG, except } from "./util";
 import { ParsedPipe } from "./types";
-import { pipe } from "rxjs";
+import { concat, pipe } from "rxjs";
 export { Tick, Flap, initialState, createPipe, SpawnPipes };
 
 class Tick implements Action {
@@ -26,7 +26,8 @@ class Tick implements Action {
     constructor(public readonly elapsed: number) {}
 
     apply(s: State): State {
-        const s2 = Tick.handleCollisons(s);
+        const s2 = Tick.handleCollisons(Tick.handleExitPipes(s));
+
         return {
             ...s2,
             time: this.elapsed,
@@ -41,6 +42,25 @@ class Tick implements Action {
         vel: b.vel.add(b.acc),
         relative_pos: b.relative_pos.add(b.vel),
     });
+
+    static handleExitPipes = (s: State): State => {
+        const expiredTopPipes = s.top_pipes.filter(
+            p => p.relative_pos.x < -(Viewport.CANVAS_WIDTH + p.width),
+        );
+        const expiredBotPipes = s.bot_pipes.filter(
+            p => p.relative_pos.x < -(Viewport.CANVAS_WIDTH + p.width),
+        );
+
+        //console.log(expiredTopPipes);
+        //console.log(expiredBotPipes);
+        const cut = except((p1: Body) => (p2: Body) => p1.id === p2.id);
+        return {
+            ...s,
+            top_pipes: cut(s.top_pipes)(expiredTopPipes),
+            bot_pipes: cut(s.bot_pipes)(expiredBotPipes),
+            exit: [...s.exit, ...expiredTopPipes, ...expiredBotPipes],
+        };
+    };
 
     static detectRectCollision =
         (b1: Body) =>
@@ -103,9 +123,6 @@ class Tick implements Action {
         };
 
         // main code
-        // something wrong with pipe check
-        console.log(s.top_pipes.filter(checkCollidewithPipe(s.bird)));
-        console.log(s.bot_pipes.filter(checkCollidewithPipe(s.bird)));
         const collideTopPipe =
             s.top_pipes.filter(checkCollidewithPipe(s.bird)).length > 0;
         const collideBotPipe =
