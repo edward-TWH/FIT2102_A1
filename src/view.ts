@@ -1,6 +1,4 @@
-import { reportUnhandledError } from "rxjs/internal/util/reportUnhandledError";
-import { State, Viewport, Birb, Constants } from "./types";
-import { Body } from "./types";
+import { Birb, Body, State, Viewport } from "./types";
 import { attr, isNotNullOrUndefined } from "./util";
 
 export { render };

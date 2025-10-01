@@ -1,6 +1,4 @@
-import { Observable } from "rxjs";
-
-export { Vec, attr, RNG, not, elem, except, isNotNullOrUndefined };
+export { attr, elem, except, isNotNullOrUndefined, not, RNG, Vec };
 
 /**
  * Class representing a 2D vector

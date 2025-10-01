@@ -1,22 +1,20 @@
 import {
-    State,
     Action,
-    Constants,
     Birb,
     Body,
-    ViewType,
-    ObjectId,
-    Rect,
-    Viewport,
-    TimeStamp,
-    Optional,
+    Constants,
     Direction,
+    ObjectId,
+    Optional,
+    ParsedPipe,
+    Rect,
+    State,
+    TimeStamp,
+    ViewType,
+    Viewport,
 } from "./types";
-import { Vec, RNG, except } from "./util";
-import { ParsedPipe } from "./types";
-import { concat, pipe } from "rxjs";
-import { relative } from "path";
-export { Tick, Flap, initialState, createPipe, SpawnPipes };
+import { RNG, Vec, except } from "./util";
+export { Flap, SpawnPipes, Tick, createPipe, initialState };
 
 class Tick implements Action {
     /**

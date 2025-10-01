@@ -2,19 +2,19 @@
  * This file contains the type declarations and constants used in the project
  */
 
-export { Viewport, Birb, Constants };
+export { Birb, Constants, Viewport };
 export type {
-    State,
-    Key,
     Action,
     Body,
-    Rect,
-    ViewType,
-    ObjectId,
-    ParsedPipe,
-    TimeStamp,
-    Optional,
     Direction,
+    Key,
+    ObjectId,
+    Optional,
+    ParsedPipe,
+    Rect,
+    State,
+    TimeStamp,
+    ViewType,
 };
 
 import { Vec } from "./util";

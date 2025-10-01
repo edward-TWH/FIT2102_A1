@@ -15,7 +15,6 @@
 import "./style.css";
 
 import {
-    Observable,
     catchError,
     filter,
     from,
@@ -24,17 +23,16 @@ import {
     map,
     merge,
     mergeMap,
+    Observable,
     scan,
     skip,
     switchMap,
     take,
-    tap,
     timer,
 } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
-import { Constants, State, Key, Viewport } from "./types";
-import { initialState, SpawnPipes } from "./state";
-import { Flap, Tick } from "./state";
+import { Flap, initialState, SpawnPipes, Tick } from "./state";
+import { Constants, Key, State } from "./types";
 import { render } from "./view";
 
 export const state$ = (csvContents: string): Observable<State> => {
