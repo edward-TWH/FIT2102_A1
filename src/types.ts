@@ -73,7 +73,6 @@ type Body = Rect &
         relative_pos: Vec;
         abs_pos: Vec;
         href?: string;
-        passed?: boolean;
     }>;
 
 type State = Readonly<{
@@ -86,6 +85,7 @@ type State = Readonly<{
     bot_pipes: ReadonlyArray<Body>;
     exit: ReadonlyArray<Body>;
     objCount: number;
+    nextPipeId: string;
 }>;
 
 type ParsedPipe = Readonly<{
