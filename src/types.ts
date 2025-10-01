@@ -71,6 +71,7 @@ type Body = Rect &
         vel: Vec;
         acc: Vec;
         relative_pos: Vec;
+        abs_pos: Vec;
         href?: string;
     }>;
 
