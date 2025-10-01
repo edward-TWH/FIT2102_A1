@@ -26,6 +26,13 @@ class Tick implements Action {
      */
     constructor(public readonly elapsed: number) {}
 
+    /**
+     * Score increases when passing through pipe.
+     * Apply bounce for collisions.
+     * Move bodies and deal with expired pipes.
+     * @param s old state
+     * @returns new state
+     */
     apply(s: State): State {
         const s2 = Tick.handleScore(
             Tick.handleCollisons(Tick.handleExitPipes(s)),
@@ -40,6 +47,11 @@ class Tick implements Action {
         } as const;
     }
 
+    /**
+     *
+     * @param b a body
+     * @returns body moved after a tick
+     */
     static moveBody = (b: Body): Body => ({
         ...b,
         vel: b.vel.add(b.acc),
@@ -47,7 +59,19 @@ class Tick implements Action {
         abs_pos: b.start_pos.add(b.relative_pos),
     });
 
+    /**
+     * Checks if bird has passed the upcoming pipe.
+     * If so, increment score and track the next pipe
+     * @param s old state
+     * @returns new state
+     */
     static handleScore = (s: State): State => {
+        /**
+         * Helper function to check if bird has passed some pipe
+         * @param bird
+         * @param pipe
+         * @returns boolean, true if bird has passed the pipe
+         */
         function checkifPassed(bird: Body, pipe: Body): boolean {
             return bird.abs_pos.x > pipe.abs_pos.x;
         }
@@ -56,6 +80,7 @@ class Tick implements Action {
 
         if (nextPipe) {
             if (checkifPassed(s.bird, nextPipe)) {
+                // we only bother looking at the top pipes, no need to look at bot pipes too.
                 const newId = Number(nextPipe.id) + 2;
                 return { ...s, score: s.score + 1, nextPipeId: String(newId) };
             }
@@ -64,6 +89,13 @@ class Tick implements Action {
         return s;
     };
 
+    /**
+     * Expired pipes are those that have moved all the way left, out of view.
+     * This function moves expired pipes from the active arrays to the exit array, so that they
+     * may be marked for removal in the View.
+     * @param s old state
+     * @returns new state, expired pipes moved out of active arrays
+     */
     static handleExitPipes = (s: State): State => {
         const expiredTopPipes = s.top_pipes.filter(
             p => p.relative_pos.x < -(Viewport.CANVAS_WIDTH + p.width),
@@ -72,8 +104,6 @@ class Tick implements Action {
             p => p.relative_pos.x < -(Viewport.CANVAS_WIDTH + p.width),
         );
 
-        //console.log(expiredTopPipes);
-        //console.log(expiredBotPipes);
         const cut = except((p1: Body) => (p2: Body) => p1.id === p2.id);
         return {
             ...s,
@@ -83,6 +113,15 @@ class Tick implements Action {
         };
     };
 
+    /**
+     * Helper function to check if two rects have collided.
+     * lx represents the top left corner of rect x
+     * rx represents the bot right corner of rect x
+     * Note that it works with svg coordinates and not cartesian.
+     * @param b1 first rect
+     * @param b2 second rect
+     * @returns
+     */
     static detectRectCollision =
         (b1: Body) =>
         (b2: Body): boolean => {
@@ -102,8 +141,21 @@ class Tick implements Action {
             return true;
         };
 
+    /**
+     * Bounce bird, decrement lives, end the game if out of lives.
+     * @param s old state
+     * @returns new state
+     */
     static handleCollisons = (s: State): State => {
-        // helper functions
+        /** Helper functions */
+        /**
+         * This function checks if the bird has collided with a surface, and bounces the bird
+         * if it has.
+         * It also checks whether the player has run out of lives and switches the gameEnd boolean
+         * attribute accordingly.
+         * @param d the direction we want to bounce: "up" | "down"
+         * @returns new state, bounces bird and checks if game is over
+         */
         const bounceBird = (d: Direction): State => {
             const bounce =
                 (bird: Body) =>
@@ -129,17 +181,32 @@ class Tick implements Action {
             return bounce(s.bird)(d);
         };
 
+        /**
+         *
+         * @param bird the bird
+         * @param pipe the pipe
+         * @returns boolean, true if bird has collided with pipe
+         */
         const checkCollidewithPipe =
             (bird: Body) =>
             (pipe: Body): boolean => {
                 return this.detectRectCollision(bird)(pipe);
             };
-
+        /**
+         *
+         * @param bird the bird
+         * @returns true if bird has collided with ceiling
+         */
         const checkCollideWithCeiling = (bird: Body): boolean => {
             const top_left = bird.start_pos.add(bird.relative_pos);
             return top_left.y <= 0;
         };
 
+        /**
+         *
+         * @param bird the bird
+         * @returns true if the bird has collided with the floor
+         */
         const checkCollideWithFloor = (bird: Body): boolean => {
             const bot_right = bird.start_pos
                 .add(bird.relative_pos)
@@ -147,7 +214,8 @@ class Tick implements Action {
             return bot_right.y >= Viewport.CANVAS_HEIGHT;
         };
 
-        // main code
+        /** main code */
+        // booleans for deciding which direction to bounce
         const collideTopPipe =
             s.top_pipes.filter(checkCollidewithPipe(s.bird)).length > 0;
         const collideBotPipe =
@@ -160,11 +228,20 @@ class Tick implements Action {
         } else if (collideBotPipe || collideFloor) {
             return bounceBird("up");
         }
+
         return s;
     };
 }
 
+/**
+ * Used to flap the bird upwards when pressing space bar
+ */
 class Flap implements Action {
+    /**
+     *
+     * @param s old state
+     * @returns new state, give the bird a new velocity
+     */
     apply(s: State): State {
         return {
             ...s,
@@ -175,10 +252,17 @@ class Flap implements Action {
         } as const;
     }
 }
-
+/**
+ * Used to spawn pipes after reading data from csv.
+ */
 class SpawnPipes implements Action {
     constructor(public readonly pipe: ParsedPipe) {}
 
+    /**
+     * Uses the curried createPipe function to make a top pipe
+     * @param pipe, parsed pipe data from csv
+     * @returns a top pipe Body
+     */
     static createTopPipe = (pipe: ParsedPipe) => {
         const width = Constants.PIPE_WIDTH,
             gap_coord = pipe.gap_y * Viewport.CANVAS_HEIGHT,
@@ -191,6 +275,11 @@ class SpawnPipes implements Action {
         })({ timeCreated: pipe.time })({ fill: "green" });
     };
 
+    /**
+     * Uses the curried createPipe function to make a top pipe
+     * @param pipe, parsed pipe data from csv
+     * @returns a top pipe Body
+     */
     static createBotPipe = (pipe: ParsedPipe) => {
         // return function composed with rect
         const width = Constants.PIPE_WIDTH,
@@ -207,8 +296,13 @@ class SpawnPipes implements Action {
         })({ timeCreated: pipe.time })({ fill: "green" });
     };
 
+    /**
+     *
+     * @param s old state
+     * @returns new state, with new pipes added
+     */
     apply(s: State): State {
-        // call create functions with timestamps, which completes signature
+        // call pipe creation functions, adding the final parameter(id)
         return {
             ...s,
             top_pipes: [
@@ -221,12 +315,21 @@ class SpawnPipes implements Action {
                 }),
                 ...s.bot_pipes,
             ],
-            objCount: s.objCount + 2,
+            objCount: s.objCount + 2, // we just created two pipes
         };
     }
 }
-
-const createRect =
+/**
+ *
+ * @param viewType the html node name
+ * @param vel a velocity vector(see util.ts)
+ * @param rect dimensions of the body
+ * @param t  marks time object is created
+ * @param opts  a bag of optional parameters
+ * @param oid unique id to identify object
+ * @returns a Body, containing all the state needed for physics
+ */
+const createBody =
     (viewType: ViewType) =>
     (vel: Vec) =>
     (rect: Rect) =>
@@ -244,9 +347,13 @@ const createRect =
         abs_pos: rect.start_pos,
     });
 
-// TODO: Write a composable function createRect for creating pipes
-const createPipe = createRect("rect")(Constants.PIPE_VEL);
+// we curry this function mainly so that we may assign unique object id's
+const createPipe = createBody("rect")(Constants.PIPE_VEL);
 
+/**
+ * Function used to initialise the bird Body.
+ * @returns the bird, as a Body
+ */
 function createBird(): Body {
     return {
         id: "0",
@@ -263,6 +370,7 @@ function createBird(): Body {
     };
 }
 
+// State at the start of the game
 const initialState: State = {
     lives: Constants.START_LIVES,
     score: Constants.START_SCORE,
