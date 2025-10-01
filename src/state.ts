@@ -119,7 +119,11 @@ class Tick implements Action {
                         ...s,
                         lives: s.lives - 1,
                         bird: { ...s.bird, vel: newVel },
-                        gameEnd: s.lives - 1 < 0 ? true : false,
+                        gameEnd:
+                            s.lives - 1 < 0 ||
+                            (s.top_pipes.length == 0 && s.objCount > 1)
+                                ? true
+                                : false,
                     };
                 };
             return bounce(s.bird)(d);
