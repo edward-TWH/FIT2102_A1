@@ -32,7 +32,7 @@ const Birb = {
 
 const Constants = {
     PIPE_WIDTH: 50,
-    TICK_RATE_MS: 50,
+    TICK_RATE_MS: 25,
     GRAVITY: new Vec(0, 1),
     START_LIVES: 3,
     START_SCORE: 0,
@@ -101,7 +101,6 @@ type ParsedPipe = Readonly<{
 
 // options bag gives flexibility when creating views for the bird and pipes
 type Optional = Readonly<{
-    href?: string;
     fill?: string;
 }>;
 
