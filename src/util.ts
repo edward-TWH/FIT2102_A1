@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 
-export { Vec, attr, RNG, not, elem, except };
+export { Vec, attr, RNG, not, elem, except, isNotNullOrUndefined };
 
 /**
  * Class representing a 2D vector
@@ -80,3 +80,12 @@ const /**
         (a: ReadonlyArray<T>) =>
         (b: ReadonlyArray<T>) =>
             a.filter(not(elem(eq)(b)));
+/**
+ * Type guard for use in filters
+ * @param input something that might be null or undefined
+ */
+function isNotNullOrUndefined<T extends object>(
+    input: null | undefined | T,
+): input is T {
+    return input != null;
+}
