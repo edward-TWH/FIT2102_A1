@@ -15,6 +15,7 @@ import {
 import { Vec, RNG, except } from "./util";
 import { ParsedPipe } from "./types";
 import { concat, pipe } from "rxjs";
+import { relative } from "path";
 export { Tick, Flap, initialState, createPipe, SpawnPipes };
 
 class Tick implements Action {
@@ -26,7 +27,9 @@ class Tick implements Action {
     constructor(public readonly elapsed: number) {}
 
     apply(s: State): State {
-        const s2 = Tick.handleCollisons(Tick.handleExitPipes(s));
+        const s2 = Tick.handleScore(
+            Tick.handleCollisons(Tick.handleExitPipes(s)),
+        );
 
         return {
             ...s2,
@@ -41,7 +44,25 @@ class Tick implements Action {
         ...b,
         vel: b.vel.add(b.acc),
         relative_pos: b.relative_pos.add(b.vel),
+        abs_pos: b.start_pos.add(b.relative_pos),
     });
+
+    static handleScore = (s: State): State => {
+        function checkifPassed(bird: Body, pipe: Body): boolean {
+            return bird.abs_pos.x > pipe.abs_pos.x;
+        }
+
+        const nextPipe = s.top_pipes.find(p => p.id === s.nextPipeId);
+
+        if (nextPipe) {
+            if (checkifPassed(s.bird, nextPipe)) {
+                const newId = Number(nextPipe.id) + 2;
+                return { ...s, score: s.score + 1, nextPipeId: String(newId) };
+            }
+        }
+
+        return s;
+    };
 
     static handleExitPipes = (s: State): State => {
         const expiredTopPipes = s.top_pipes.filter(
@@ -216,6 +237,7 @@ const createRect =
         vel: vel,
         acc: new Vec(),
         relative_pos: new Vec(),
+        abs_pos: rect.start_pos,
     });
 
 // TODO: Write a composable function createRect for creating pipes
@@ -226,15 +248,13 @@ function createBird(): Body {
         id: "0",
         timeCreated: 0,
         viewType: "image",
-        start_pos: new Vec(
-            Constants.BIRD_START_POS.x,
-            Constants.BIRD_START_POS.y,
-        ),
+        start_pos: Constants.BIRD_START_POS,
         width: Birb.WIDTH,
         height: Birb.HEIGHT,
         vel: new Vec(),
         acc: Constants.GRAVITY,
         relative_pos: new Vec(),
+        abs_pos: Constants.BIRD_START_POS,
         href: "assets/birb.png",
     };
 }
@@ -249,4 +269,5 @@ const initialState: State = {
     top_pipes: [],
     exit: [],
     objCount: 1,
+    nextPipeId: "1",
 };
