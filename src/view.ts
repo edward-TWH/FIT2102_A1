@@ -13,6 +13,7 @@ export { render };
 const bringToForeground = (elem: SVGElement): void => {
     elem.parentNode?.appendChild(elem);
 };
+
 /**
  * Displays a SVG element on the canvas. Brings to foreground.
  * @param elem SVG element to display
@@ -21,6 +22,7 @@ const show = (elem: SVGElement): void => {
     elem.setAttribute("visibility", "visible");
     bringToForeground(elem);
 };
+
 /**
  * Hides a SVG element on the canvas.
  * @param elem SVG element to hide
@@ -28,6 +30,7 @@ const show = (elem: SVGElement): void => {
 const hide = (elem: SVGElement): void => {
     elem.setAttribute("visibility", "hidden");
 };
+
 /**
  * Creates an SVG element with the given properties.
  *
@@ -53,11 +56,9 @@ const render = (): ((s: State) => void) => {
     // Canvas elements
     const gameOver = document.querySelector("#gameOver") as SVGElement;
     const container = document.querySelector("#main") as HTMLElement;
-
     const livesText = document.querySelector("#livesText") as HTMLElement;
     const scoreText = document.querySelector("#scoreText") as HTMLElement;
     const svg = document.querySelector("#svgCanvas") as HTMLElement;
-
     const birdImg = createSvgElement(svg.namespaceURI, "image", {
         href: "assets/birb.png",
         x: `${Viewport.CANVAS_WIDTH * 0.3 - Birb.WIDTH / 2}`,
@@ -81,7 +82,12 @@ const render = (): ((s: State) => void) => {
             show(gameOver);
             return;
         }
-        //console.log(s.exit);
+        /**
+         *
+         * @param rootSVG root node
+         * @param b any body that needs to move
+         * @returns void
+         */
         const updateBodyView = (rootSVG: HTMLElement) => (b: Body) => {
             function createBodyView() {
                 const v = createSvgElement(svg.namespaceURI, b.viewType, {
@@ -99,17 +105,22 @@ const render = (): ((s: State) => void) => {
             }
 
             const v = document.getElementById(b.id) || createBodyView();
+            // move bodies using css function
             attr(v, {
                 transform: `translate(${b.relative_pos.x}, ${b.relative_pos.y})`,
             });
         };
+
+        // update text
         livesText.textContent = `${s.lives}`;
         scoreText.textContent = `${s.score}`;
 
+        // move bird and pipes
         updateBodyView(svg)(s.bird);
         s.top_pipes.forEach(updateBodyView(svg));
         s.bot_pipes.forEach(updateBodyView(svg));
 
+        // remove expired pipes because we don't need to move them anymore
         s.exit
             .map(o => document.getElementById(o.id))
             .filter(isNotNullOrUndefined)
