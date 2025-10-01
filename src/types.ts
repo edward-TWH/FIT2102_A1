@@ -73,6 +73,7 @@ type Body = Rect &
         relative_pos: Vec;
         abs_pos: Vec;
         href?: string;
+        passed?: boolean;
     }>;
 
 type State = Readonly<{
