@@ -33,18 +33,17 @@ import {
 } from "rxjs";
 import { fromFetch } from "rxjs/fetch";
 import { Constants, State, Key, Viewport } from "./types";
-import { createPipe, initialState, SpawnPipes } from "./state";
+import { initialState, SpawnPipes } from "./state";
 import { Flap, Tick } from "./state";
 import { render } from "./view";
-import { Vec } from "./util";
 
 export const state$ = (csvContents: string): Observable<State> => {
-    /** User input */
+    /** Stream for keyboard presses */
     const key$ = fromEvent<KeyboardEvent>(document, "keypress");
     const fromKey = (keyCode: Key) =>
         key$.pipe(filter(({ code }) => code === keyCode));
 
-    /** Create a stream for space presses, which creates a stream of Flap objects */
+    /** Stream for flaps */
     const flap$ = fromKey("Space").pipe(map(_ => new Flap()));
 
     /** Determines the rate of time steps */
@@ -52,9 +51,10 @@ export const state$ = (csvContents: string): Observable<State> => {
         map(elapsed => new Tick(elapsed)),
     );
 
-    /** Parse the csv contents and create an observable to emit values at the given times */
+    /** Parse the csv contents and create an observable to emit values at specified times */
 
     const pipe$ = from(csvContents.split(/\r?\n/)).pipe(
+        // parse and extracting values
         skip(1),
         map(row => row.split(",")),
         map(
@@ -65,6 +65,7 @@ export const state$ = (csvContents: string): Observable<State> => {
                     time: Number(column[2]),
                 }) as const,
         ),
+        // use values to instantiate SpawnPipes objects
         mergeMap(({ gap_y, gap_height, time }) =>
             timer(time * 1000).pipe(
                 map(
@@ -78,6 +79,8 @@ export const state$ = (csvContents: string): Observable<State> => {
             ),
         ),
     );
+
+    // state is reduced by calling the apply method
     return merge(flap$, tick$, pipe$).pipe(
         scan((state, action) => action.apply(state), initialState),
     );
