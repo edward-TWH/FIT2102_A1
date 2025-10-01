@@ -4,6 +4,7 @@ export { Vec, attr, RNG, not, elem, except, isNotNullOrUndefined };
 
 /**
  * Class representing a 2D vector
+ * Taken from asteroids example
  */
 class Vec {
     constructor(
@@ -19,6 +20,7 @@ class Vec {
  * set a number of attributes on an Element at once
  * @param e the Element
  * @param o a property bag
+ * Taken from asteroids example
  */
 const attr = (e: Element, o: { [p: string]: unknown }) => {
     for (const k in o) e.setAttribute(k, String(o[k]));
@@ -28,6 +30,7 @@ const attr = (e: Element, o: { [p: string]: unknown }) => {
  * A random number generator which provides two pure functions
  * `hash` and `scaleToRange`.  Call `hash` repeatedly to generate the
  * sequence of hashes.
+ * Taken from asteroids example
  */
 abstract class RNG {
     // LCG using GCC's constants
@@ -47,10 +50,12 @@ abstract class RNG {
      */
     public static scale = (hash: number) => (2 * hash) / (RNG.m - 1) - 1;
 }
+
 const /**
      * Composable not: invert boolean result of given function
      * @param f a function returning boolean
      * @param x the value that will be tested with f
+     * Taken from asteroids example
      */
     not =
         <T>(f: (x: T) => boolean) =>
@@ -61,6 +66,7 @@ const /**
      * @param eq equality test function for two Ts
      * @param a an array that will be searched
      * @param e an element to search a for
+     * Taken from asteroids example
      */
     elem =
         <T>(eq: (_: T) => (_: T) => boolean) =>
@@ -74,6 +80,7 @@ const /**
      * @param eq equality test function for two Ts
      * @param a array to be filtered
      * @param b array of elements to be filtered out of a
+     * Taken from asteroids example
      */
     except =
         <T>(eq: (_: T) => (_: T) => boolean) =>
@@ -83,6 +90,7 @@ const /**
 /**
  * Type guard for use in filters
  * @param input something that might be null or undefined
+ * Taken from asteroids example
  */
 function isNotNullOrUndefined<T extends object>(
     input: null | undefined | T,
