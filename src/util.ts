@@ -47,3 +47,36 @@ abstract class RNG {
      */
     public static scale = (hash: number) => (2 * hash) / (RNG.m - 1) - 1;
 }
+const /**
+     * Composable not: invert boolean result of given function
+     * @param f a function returning boolean
+     * @param x the value that will be tested with f
+     */
+    not =
+        <T>(f: (x: T) => boolean) =>
+        (x: T) =>
+            !f(x),
+    /**
+     * is e an element of a using the eq function to test equality?
+     * @param eq equality test function for two Ts
+     * @param a an array that will be searched
+     * @param e an element to search a for
+     */
+    elem =
+        <T>(eq: (_: T) => (_: T) => boolean) =>
+        (a: ReadonlyArray<T>) =>
+        (e: T) =>
+            a.findIndex(eq(e)) >= 0,
+    /**
+
+    /**
+     * array a except anything in b
+     * @param eq equality test function for two Ts
+     * @param a array to be filtered
+     * @param b array of elements to be filtered out of a
+     */
+    except =
+        <T>(eq: (_: T) => (_: T) => boolean) =>
+        (a: ReadonlyArray<T>) =>
+        (b: ReadonlyArray<T>) =>
+            a.filter(not(elem(eq)(b)));
